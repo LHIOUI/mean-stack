@@ -1,0 +1,5 @@
+<div *ngFor="let user of $users | async">
+  <h2>{{user.firstname}} {{user.lastname}}</h2>
+  <h2>{{user.birth_date | date:'short'}}</h2>
+  <h2>{{user.email}}</h2>
+</div>
