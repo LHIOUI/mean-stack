@@ -1,34 +1,58 @@
-const { ApolloServer, gql } = require('apollo-server-express');
-const { GraphQLScalarType } = require('graphql');
+const { ApolloServer, gql } = require("apollo-server-express");
 
-const db = require('./db');
-
+const User = require("./models/user.model");
+const Post = require("./models/post.model");
+const Profile = require("./models/profile.model");
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
-  scalar Date
   type Query {
-    users: [User]
+    posts: [Post]
+    user(id: Int!): User
+    post(id: Int!): Post
+    profile(id: Int!): Profile
   }
   type User {
-    firstname: String
-    lastname: String
+    id: Int!
+    name: String
     email: String
-    birth_date: Date!
+    posts: [Post]
+    profile: Profile
+  }
+
+  type Post {
+    id: Int!
+    title: String
+    createdAt: String
+    published: Int
+    author: User
+  }
+
+  type Profile {
+    id: Int!
+    bio: String
+    user: User
   }
 `;
-
-const dateScalar = new GraphQLScalarType({
-  name: 'Date',
-  description: 'Date custom scalar type',
-  serialize(value) {
-    return new Date(value).toUTCString()
-  }
-});
 // Provide resolver functions for your schema fields
 const resolvers = {
-  Date: dateScalar,
   Query: {
-    users: () => db.getAllUsers(),
+    posts: () => Post.find(),
+    user: (_, { id }) => User.findOne({ id }),
+    post: (_, { id }) => Post.findOne({ id }),
+    profile: (_, { id }) => Profile.findOne({ id }),
+  },
+  User: {
+    posts: (author) => Post.find({ authorId: author.id }),
+    profile: (user) => Profile.findOne({ userId: user.id }),
+  },
+
+  Post: {
+    author: (post) => User.findOne({ id: post.authorId }),
+    createdAt: (post) => new Date(post.createdAt).toISOString()
+  },
+
+  Profile: {
+    user: (profile) => User.findOne({ id: profile.userId }),
   },
 };
 

@@ -1,16 +1,16 @@
 //api.js
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
+const Post = require('./models/post.model');
 const cors = require('cors');
 var corsOptions = {
     origin: '*',
     optionsSuccessStatus: 200
 }
 // our simple get /users API
-router.get('/users', cors(corsOptions), async(req, res) => {
+router.get('/posts', cors(corsOptions), async(req, res) => {
    try {
-      const result = await db.getAllUsers();
+      const result = await Post.find();
       res.send(result);
    } catch (error) {
        res.send(error);
