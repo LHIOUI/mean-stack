@@ -11,6 +11,7 @@ const typeDefs = gql`
     post(id: Int!): Post
     profile(id: Int!): Profile
   }
+  
   type User {
     id: Int!
     name: String
@@ -22,6 +23,7 @@ const typeDefs = gql`
   type Post {
     id: Int!
     title: String
+    content: String
     createdAt: String
     published: Int
     author: User
